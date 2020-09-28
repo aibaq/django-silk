@@ -54,6 +54,7 @@ class CaseInsensitiveDictionary(dict):
 
 class Request(models.Model):
     id = CharField(max_length=36, default=uuid4, primary_key=True)
+    username = CharField(max_length=100, db_index=True)
     path = CharField(max_length=190, db_index=True)
     query_params = TextField(blank=True, default='')
     raw_body = TextField(blank=True, default='')
@@ -188,6 +189,7 @@ class Request(models.Model):
 
 class Response(models.Model):
     id = CharField(max_length=36, default=uuid4, primary_key=True)
+    username = CharField(max_length=100, db_index=True)
     request = OneToOneField(
         Request, related_name='response', db_index=True,
         on_delete=models.CASCADE,

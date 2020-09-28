@@ -51,6 +51,16 @@ def _parse_content_type(content_type):
     return content_type, char_set
 
 
+def _username(request):
+    username = 'guest'
+    if hasattr(request, 'user') and request.user.is_authenticated:
+        if hasattr(request.user, 'username'):
+            username = request.user.username
+        else:
+            username = f'{request.user.pk}'
+    return username
+
+
 class RequestModelFactory(object):
     """Produce Request models from Django request objects"""
     # String to replace on masking
@@ -230,6 +240,7 @@ class RequestModelFactory(object):
 
         request_model = models.Request.objects.create(
             path=path,
+            username=_username(self.request),
             encoded_headers=self.encoded_headers(),
             method=self.request.method,
             query_params=query_params,
@@ -310,6 +321,7 @@ class ResponseModelFactory(object):
                 headers[header] = val
         silky_response = models.Response.objects.create(
             request_id=self.request.id,
+            username=_username(self.request),
             status_code=self.response.status_code,
             encoded_headers=json.dumps(headers),
             body=b
