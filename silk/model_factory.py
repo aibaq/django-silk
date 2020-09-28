@@ -58,6 +58,16 @@ def _username(request):
             username = request.user.username
         else:
             username = f'{request.user.pk}'
+    else:
+        try:
+            from rest_framework.authentication import TokenAuthentication
+            user = TokenAuthentication().authenticate(request)[0]
+            if hasattr(user, 'username'):
+                username = user.username
+            else:
+                username = f'{user.pk}'
+        except:
+            pass
     return username
 
 
